@@ -1,4 +1,33 @@
-const sizes = ["2XS", "XS", "S", "M", "L", "XL", "2XL", "3XL"];
+const sizes = ["2XS", "XS", "S", "M", "L", "XL", "2XL", "3XL", "OS"];
+
+// Parses a box input string like "M-10" or "S-10,M-5" into [{size, qty}, ...].
+// A bare number like "10" (no size code) is treated as OS-10 (One Size).
+// Returns null if any part is invalid.
+function parseBoxInput(input) {
+  const parts = input.split(",");
+  const items = [];
+
+  for (const part of parts) {
+    let size, qtyStr;
+
+    if (/^\d+$/.test(part)) {
+      size = "OS";
+      qtyStr = part;
+    } else {
+      [size, qtyStr] = part.split("-");
+      if (size === "ONESIZE" || size === "ONE SIZE") size = "OS";
+    }
+
+    const qty = parseInt(qtyStr, 10);
+
+    if (!sizes.includes(size) || isNaN(qty) || qty <= 0) {
+      return null;
+    }
+    items.push({ size, qty });
+  }
+
+  return items;
+}
 let allStyleEntries = {}; // { styleName: { summary: {}, logEntries: [] } }
 
 function initializeStyleData(style) {
@@ -121,27 +150,21 @@ function addEntry() {
     .toUpperCase();
 
   if (!input || !style) {
-    alert("Please enter a style and size-quantity (e.g. M-10 or S-10,M-5).");
+    alert(
+      "Please enter a style and size-quantity (e.g. M-10, S-10,M-5, or 10 for One Size).",
+    );
     return;
   }
 
   initializeStyleData(style);
 
-  // Split by commas for multiple sizes in one box
-  const parts = input.split(",");
-  const items = [];
+  const items = parseBoxInput(input);
 
-  for (const part of parts) {
-    const [size, qtyStr] = part.split("-");
-    const qty = parseInt(qtyStr, 10);
-
-    if (!sizes.includes(size) || isNaN(qty) || qty <= 0) {
-      alert(
-        "Invalid entry. Use format SIZE-QUANTITY (e.g. M-10) or multiple like S-10,M-5",
-      );
-      return;
-    }
-    items.push({ size, qty });
+  if (!items) {
+    alert(
+      "Invalid entry. Use format SIZE-QUANTITY (e.g. M-10), multiple like S-10,M-5, OS-10 for One Size, or just a number (e.g. 10) for One Size.",
+    );
+    return;
   }
 
   // Add quantities per size
@@ -196,7 +219,7 @@ function editLogEntry(style, entryId) {
     : `${entry.size}-${entry.qty}`;
 
   const next = prompt(
-    "Edit this box. Use format like M-10 or S-10,M-5",
+    "Edit this box. Use format like M-10, S-10,M-5, or 10 for One Size",
     current,
   );
   if (next === null) return; // user cancelled
@@ -207,19 +230,13 @@ function editLogEntry(style, entryId) {
     return;
   }
 
-  // Parse (same rules as your addEntry)
-  const parts = input.split(",");
-  const items = [];
+  const items = parseBoxInput(input);
 
-  for (const part of parts) {
-    const [size, qtyStr] = part.split("-");
-    const qty = parseInt(qtyStr, 10);
-
-    if (!sizes.includes(size) || isNaN(qty) || qty <= 0) {
-      alert("Invalid entry. Use format SIZE-QUANTITY like M-10 or S-10,M-5");
-      return;
-    }
-    items.push({ size, qty });
+  if (!items) {
+    alert(
+      "Invalid entry. Use format SIZE-QUANTITY like M-10, S-10,M-5, OS-10, or just a number (e.g. 10) for One Size.",
+    );
+    return;
   }
 
   // Apply updated entry (store as mixed-box format)
