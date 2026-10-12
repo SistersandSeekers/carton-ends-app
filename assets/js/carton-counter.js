@@ -395,11 +395,20 @@ function exportToExcel() {
   const wb = XLSX.utils.book_new();
 
   // --- Helper to sanitize sheet names ---
-  function sanitizeSheetName(name) {
-    return name
-      .replace(/[:\\/?*\[\]]/g, "") // remove invalid characters
-      .substring(0, 31) // Excel allows max 31 chars
-      .trim(); // remove leading/trailing spaces
+  // Excel allows max 31 chars, so shorten the style (not the suffix) to keep
+  // names unique, otherwise long styles make _Summary and _Log collide and
+  // the export throws.
+  const usedNames = new Set();
+  function sanitizeSheetName(style, suffix) {
+    const clean = style.replace(/[:\\/?*\[\]]/g, "").trim();
+    const base = clean.substring(0, 31 - suffix.length).trim();
+    let name = `${base}${suffix}`;
+    for (let n = 2; usedNames.has(name.toLowerCase()); n++) {
+      const tag = `${n}${suffix}`;
+      name = `${clean.substring(0, 31 - tag.length).trim()}${tag}`;
+    }
+    usedNames.add(name.toLowerCase());
+    return name;
   }
 
   for (const [style, data] of Object.entries(allStyleEntries)) {
@@ -413,7 +422,7 @@ function exportToExcel() {
     XLSX.utils.book_append_sheet(
       wb,
       summarySheet,
-      sanitizeSheetName(`${style}_Summary`),
+      sanitizeSheetName(style, "_Summary"),
     );
 
     // --- Log Sheet ---
@@ -449,7 +458,7 @@ function exportToExcel() {
     XLSX.utils.book_append_sheet(
       wb,
       logSheet,
-      sanitizeSheetName(`${style}_Log`),
+      sanitizeSheetName(style, "_Log"),
     );
   }
 
@@ -554,7 +563,7 @@ async function exportAllLabelsToPDF() {
   const grandTotal = flat.length;
 
   // Batch prompt
-  const defaultBatch = grandTotal > 100 ? 50 : grandTotal; // sensible default
+  const defaultBatch = Math.min(grandTotal, 40); // keep each PDF small enough for the browser
   const batchStr = prompt(
     `You have ${grandTotal} labels.\n\n` +
       `Enter batch size (e.g. 50). Larger batches may fail in-browser.`,
@@ -644,10 +653,15 @@ async function exportAllLabelsToPDF() {
           backgroundColor: "#ffffff",
         });
 
-        const imgData = canvas.toDataURL("image/png");
+        // JPEG uses far less memory than PNG, which matters on big orders
+        const imgData = canvas.toDataURL("image/jpeg", 0.85);
 
         if (i !== 0) pdf.addPage();
-        pdf.addImage(imgData, "PNG", 0, 0, 210, 297);
+        pdf.addImage(imgData, "JPEG", 0, 0, 210, 297, undefined, "FAST");
+
+        // release the canvas memory straight away
+        canvas.width = 0;
+        canvas.height = 0;
       }
 
       document.body.removeChild(exportWrapper);
@@ -659,6 +673,9 @@ async function exportAllLabelsToPDF() {
 
       batchStart = batchEnd;
       batchIndex++;
+
+      // pause so the browser doesn't block back-to-back downloads
+      if (batchStart < grandTotal) await new Promise((r) => setTimeout(r, 1500));
     }
 
     setProgress(grandTotal, grandTotal, "Done:");
