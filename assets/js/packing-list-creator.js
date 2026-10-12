@@ -81,21 +81,25 @@ function parseLabels() {
 
     // Data rows
     document.querySelectorAll("#packingTable tbody tr").forEach(tr => {
-      const row = Array.from(tr.children).map(td => td.textContent);
+      // Carton number and size counts as real numbers, style stays text
+      const row = Array.from(tr.children).map((td, i) => i === 1 ? td.textContent : Number(td.textContent));
       ws_data.push(row);
     });
 
-    // Blank rows up to 15 data rows
-    for (let i = ws_data.length; i < 22; i++) {
-      ws_data.push(["", "", "", "", "", "", "", 0]);
-    }
-
     // Totals row
     const totalRow = document.querySelector("#totalsRow");
-    const totalData = Array.from(totalRow.children).map(td => td.textContent);
+    // The label cell spans two columns in the HTML, so pad it to keep totals under their size columns
+    const totalData = ["Totals Units By Size", ""].concat(
+      Array.from(totalRow.children).slice(1).map(td => td.textContent)
+    );
     ws_data.push(totalData);
 
     const ws = XLSX.utils.aoa_to_sheet(ws_data);
+
+    // Explicit widths and row heights so every row has a fixed size when printed
+    ws["!cols"] = [{ wch: 12 }, { wch: 30 }, { wch: 8 }, { wch: 8 }, { wch: 8 }, { wch: 8 }, { wch: 8 }, { wch: 22 }];
+    ws["!rows"] = ws_data.map(() => ({ hpt: 18 }));
+    ws["!margins"] = { left: 0.5, right: 0.5, top: 0.5, bottom: 0.5, header: 0.3, footer: 0.3 };
     XLSX.utils.book_append_sheet(wb, ws, "Packing List");
     XLSX.writeFile(wb, "Formatted_Packing_List.xlsx");
   }
