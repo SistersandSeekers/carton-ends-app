@@ -48,8 +48,8 @@ body.has-nav > header { display: none; }
   color: #fff;
   text-decoration: none;
 }
-.topnav-link:hover { background: #2a2a2a; }
-.topnav-link.active { background: #fff; color: #000; }
+.topnav-link:hover { background: #2f2929; }
+.topnav-link.active { background: #2f2929; color: #fff; }
 
 /* Page layout */
 .main-container {
@@ -177,3 +177,13 @@ td { font-variant-numeric: tabular-nums; }
 
 /* Logo artwork is dark, so turn it white on the black bar */
 .topnav-brand img { filter: brightness(0) invert(1); }
+
+/* Labels: one A4 label per row, centred (they are 210mm wide each) */
+#labels-container, #labels {
+  grid-template-columns: 1fr;
+  justify-items: center;
+  gap: 24px;
+}
+@media print {
+  #labels-container, #labels { gap: 0; }
+}
