@@ -180,7 +180,7 @@ td { font-variant-numeric: tabular-nums; }
 
 /* Labels: one A4 label per row, centred (they are 210mm wide each) */
 #labels-container, #labels {
-  grid-template-columns: 1fr;
+  grid-template-columns: repeat(2, 1fr);
   justify-items: center;
   gap: 24px;
 }

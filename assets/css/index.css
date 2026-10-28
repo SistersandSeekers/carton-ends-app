@@ -75,7 +75,8 @@ input {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 20px;
-    width: 100%;
+    width: max-content;
+    max-width: none;
     page-break-inside: avoid;
     }
     
