@@ -31,6 +31,7 @@
   <div class="butons-container">
     <button onclick="parseLabels()">Parse Labels</button>
     <button onclick="downloadExcel()">Download Excel</button>
+    <button onclick="downloadPdf()">Download PDF</button>
     <button onclick="resetPackingList()">Reset Packing List</button>
   </div>
 
@@ -50,7 +51,9 @@
   </table>
 </div>    
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-  <script src="assets/js/packing-list-creator.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="assets/js/packing-list-pdf.js?v=1"></script>
+  <script src="assets/js/packing-list-creator.js?v=2"></script>
 </body>
 </html>
 

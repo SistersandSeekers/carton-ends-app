@@ -104,6 +104,36 @@ function parseLabels() {
     XLSX.writeFile(wb, "Formatted_Packing_List.xlsx");
   }
 
+  async function downloadPdf() {
+    const sizeCols = ["2XS", "XS", "S", "M", "L"];
+    const rows = Array.from(document.querySelectorAll("#packingTable tbody tr")).map(tr => {
+      const cells = tr.querySelectorAll("td");
+      const sizeMap = {};
+      sizeCols.forEach((s, i) => (sizeMap[s] = Number(cells[i + 2].textContent) || 0));
+      return {
+        cartonNo: Number(cells[0].textContent),
+        style: cells[1].textContent.trim(),
+        sizeMap,
+        total: Number(cells[7].textContent) || 0
+      };
+    });
+
+    if (rows.length === 0) {
+      alert("Parse some labels first.");
+      return;
+    }
+
+    const bookingRef = prompt("Enter BOOKING REF:", localStorage.getItem("lastBookingRef") || "");
+    if (bookingRef === null) return;
+    const po = prompt("Enter PO Number:", localStorage.getItem("lastPO") || "");
+    if (po === null) return;
+
+    localStorage.setItem("lastBookingRef", bookingRef.trim());
+    localStorage.setItem("lastPO", po.trim());
+
+    await createPackingListPdf({ rows, sizes: sizeCols, bookingRef: bookingRef.trim(), po: po.trim() });
+  }
+
 function resetPackingList() {
 document.querySelector("#packingTable tbody").innerHTML = "";
 const tr = document.getElementById("totalsRow").children;
