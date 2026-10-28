@@ -74,10 +74,10 @@ async function createPackingListPdf({ rows, sizes, bookingRef, po }) {
       pdf.text("SistersandSeekers", M, 21);
     }
 
-    pdf.setFont("helvetica", "bolditalic");
+    pdf.setFont("helvetica", "bold");
     pdf.setFontSize(16);
     pdf.setTextColor(...DARK);
-    pdf.text("PACKING LIST", pageW - M, 20, { align: "right" });
+    pdf.text("Packing List", pageW - M, 20, { align: "right" });
 
     pdf.setDrawColor(...DARK);
     pdf.setLineWidth(0.6);
