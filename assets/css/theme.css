@@ -32,12 +32,12 @@ body.has-nav > header { display: none; }
   flex-wrap: wrap;
   padding: 0 36px;
   min-height: 60px;
-  background: var(--surface);
-  border-bottom: 1px solid var(--border);
+  background: #000;
+  border-bottom: 1px solid #000;
 }
 .topnav-brand {
   font: 700 18px "Playfair Display", serif;
-  color: var(--text);
+  color: #fff;
 }
 .topnav-links { display: flex; flex-wrap: wrap; gap: 4px; }
 .topnav-link {
@@ -45,17 +45,20 @@ body.has-nav > header { display: none; }
   border-radius: 8px;
   font-size: 14px;
   font-weight: 500;
-  color: var(--muted);
+  color: #fff;
   text-decoration: none;
 }
-.topnav-link:hover { background: var(--stripe); color: var(--text); }
-.topnav-link.active { background: var(--primary); color: #fff; }
+.topnav-link:hover { background: #2a2a2a; }
+.topnav-link.active { background: #fff; color: #000; }
 
 /* Page layout */
 .main-container {
+  max-width: 1200px;
+  margin: 0 auto;
   padding: 32px 36px 48px;
-  align-items: flex-start;
-  text-align: left;
+  box-sizing: border-box;
+  align-items: center;
+  text-align: center;
 }
 h2 {
   font-family: "Playfair Display", serif;
@@ -72,6 +75,9 @@ form {
   padding: 22px 24px;
   max-width: 560px;
   width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: left;
   box-sizing: border-box;
   align-items: stretch;
 }
@@ -119,7 +125,7 @@ button:disabled { opacity: 0.55; cursor: progress; }
 .buttons-container, .butons-container {
   display: flex;
   flex-wrap: wrap;
-  justify-content: flex-start;
+  justify-content: center;
   gap: 4px;
   margin-top: 12px;
 }
@@ -156,8 +162,8 @@ td { font-variant-numeric: tabular-nums; }
   border: 1px solid var(--border);
   border-radius: var(--radius);
 }
-.tables-container { justify-content: flex-start; }
-#all-styles-container { justify-content: flex-start; margin: 10px 0; }
+.tables-container { justify-content: center; width: 100%; }
+#all-styles-container { justify-content: center; margin: 10px 0; }
 .toggle-log-btn { margin-right: 6px; }
 
 @media print {
@@ -168,3 +174,6 @@ td { font-variant-numeric: tabular-nums; }
 
 .topnav-brand { display: flex; align-items: center; }
 .topnav-brand img { display: block; height: 22px; width: auto; }
+
+/* Logo artwork is dark, so turn it white on the black bar */
+.topnav-brand img { filter: brightness(0) invert(1); }
