@@ -917,20 +917,6 @@ function hideProgress() {
 async function exportPackingListToPDF() {
   loadFromStorage();
 
-  const bookingRef = prompt(
-    "Enter BOOKING REF:",
-    localStorage.getItem("lastBookingRef") || "",
-  );
-  if (bookingRef === null) return;
-
-  const po = prompt("Enter PO Number:", localStorage.getItem("lastPO") || "");
-  if (po === null) return;
-
-  const bookingRefClean = bookingRef.trim();
-  const poClean = po.trim();
-  localStorage.setItem("lastBookingRef", bookingRefClean);
-  localStorage.setItem("lastPO", poClean);
-
   const flat = buildFlatCartonsAcrossAllStyles();
   if (flat.length === 0) {
     alert("No cartons found to export.");
@@ -946,10 +932,11 @@ async function exportPackingListToPDF() {
     return { cartonNo: idx + 1, style, sizeMap, total };
   });
 
-  await createPackingListPdf({
+  // Review and edit screen; the PDF is made from the "Download PDF" button there
+  openPackingListEditor({
     rows,
     sizes,
-    bookingRef: bookingRefClean,
-    po: poClean,
+    bookingRef: localStorage.getItem("lastBookingRef") || "",
+    po: localStorage.getItem("lastPO") || "",
   });
 }

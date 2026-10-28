@@ -123,15 +123,13 @@ function parseLabels() {
       return;
     }
 
-    const bookingRef = prompt("Enter BOOKING REF:", localStorage.getItem("lastBookingRef") || "");
-    if (bookingRef === null) return;
-    const po = prompt("Enter PO Number:", localStorage.getItem("lastPO") || "");
-    if (po === null) return;
-
-    localStorage.setItem("lastBookingRef", bookingRef.trim());
-    localStorage.setItem("lastPO", po.trim());
-
-    await createPackingListPdf({ rows, sizes: sizeCols, bookingRef: bookingRef.trim(), po: po.trim() });
+    // Review and edit screen; the PDF is made from the "Download PDF" button there
+    openPackingListEditor({
+      rows,
+      sizes: sizeCols,
+      bookingRef: localStorage.getItem("lastBookingRef") || "",
+      po: localStorage.getItem("lastPO") || ""
+    });
   }
 
 function resetPackingList() {
