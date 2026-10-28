@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <title>Packing List App</title>
   <link rel="stylesheet" href="assets/css/index.css">
+    <link rel="stylesheet" href="assets/css/theme.css?v=1" />
 </head>
 <body>
     <header>
@@ -29,7 +30,7 @@
   <h2>Create packing list from carton end labels</h2>  
   <textarea id="labelInput" rows="12" placeholder="Paste carton end labels here..." style="width: 50%;"></textarea>
   <div class="butons-container">
-    <button onclick="parseLabels()">Parse Labels</button>
+    <button class="primary" onclick="parseLabels()">Parse Labels</button>
     <button onclick="downloadExcel()">Download Excel</button>
     <button onclick="downloadPdf()">Download PDF</button>
     <button onclick="resetPackingList()">Reset Packing List</button>
@@ -54,6 +55,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="assets/js/packing-list-pdf.js?v=1"></script>
   <script src="assets/js/packing-list-creator.js?v=2"></script>
+    <script src="assets/js/layout.js?v=1"></script>
 </body>
 </html>
 

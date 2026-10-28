@@ -138,24 +138,73 @@ document.addEventListener("DOMContentLoaded", () => {
     refreshLabels(); // <- ensure the UI resets too
   });
 
-  // 📄 Export as PDF
+  // 📄 Export as PDF (in batches so large orders don't crash the browser)
   exportButton?.addEventListener("click", async () => {
-    const { jsPDF } = window.jspdf;
-    const pdf = new jsPDF({ unit: "mm", format: "a4", orientation: "portrait" });
-    const labels = document.querySelectorAll(".label");
-
-    for (let i = 0; i < labels.length; i++) {
-      const label = labels[i];
-      const canvas = await html2canvas(label, { scale: 2, useCORS: true });
-      const imgData = canvas.toDataURL("image/png");
-      const imgProps = pdf.getImageProperties(imgData);
-      const pdfWidth = 210;
-      const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-
-      if (i !== 0) pdf.addPage();
-      pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+    const labels = Array.from(document.querySelectorAll(".label"));
+    const total = labels.length;
+    if (total === 0) {
+      alert("No labels to export.");
+      return;
     }
 
-    pdf.save("Carton_Labels.pdf");
+    const defaultBatch = Math.min(total, 40);
+    const batchStr = prompt(
+      `You have ${total} labels.
+
+` +
+        `Enter batch size (e.g. 40). Larger batches may fail in-browser.`,
+      String(defaultBatch),
+    );
+    if (batchStr === null) return;
+
+    let batchSize = parseInt(batchStr, 10);
+    if (!Number.isFinite(batchSize) || batchSize <= 0) batchSize = defaultBatch;
+
+    const { jsPDF } = window.jspdf;
+    const originalText = exportButton.innerText;
+    exportButton.disabled = true;
+
+    try {
+      for (let batchStart = 0; batchStart < total; batchStart += batchSize) {
+        const batchEnd = Math.min(batchStart + batchSize, total);
+        const pdf = new jsPDF({ unit: "mm", format: "a4", orientation: "portrait" });
+
+        for (let i = batchStart; i < batchEnd; i++) {
+          exportButton.innerText = `Exporting ${i + 1}/${total}…`;
+
+          const canvas = await html2canvas(labels[i], {
+            scale: 1.5,
+            useCORS: true,
+            backgroundColor: "#ffffff",
+          });
+          // JPEG uses far less memory than PNG, which matters on big orders
+          const imgData = canvas.toDataURL("image/jpeg", 0.85);
+
+          if (i !== batchStart) pdf.addPage();
+          pdf.addImage(imgData, "JPEG", 0, 0, 210, 297, undefined, "FAST");
+
+          // release the canvas memory straight away
+          canvas.width = 0;
+          canvas.height = 0;
+        }
+
+        pdf.save(
+          total <= batchSize
+            ? "Carton_Labels.pdf"
+            : `Carton_Labels_${batchStart + 1}-${batchEnd}.pdf`,
+        );
+
+        // pause so the browser doesn't block back-to-back downloads
+        if (batchEnd < total) await new Promise((r) => setTimeout(r, 1500));
+      }
+    } catch (err) {
+      console.error(err);
+      alert(
+        "PDF export failed (likely too many labels in one batch). Try a smaller batch size.",
+      );
+    } finally {
+      exportButton.innerText = originalText;
+      exportButton.disabled = false;
+    }
   });
 });

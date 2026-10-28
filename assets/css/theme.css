@@ -1,0 +1,196 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Playfair+Display:wght@600;700&display=swap");
+
+/* Design tokens */
+:root {
+  --bg: #f3f0eb;
+  --surface: #ffffff;
+  --border: #e6e1d8;
+  --text: #1f1f1f;
+  --muted: #6b665d;
+  --sidebar: #1a1a1a;
+  --primary: #1b2236;
+  --stripe: #f7f4ef;
+  --radius: 12px;
+}
+
+body {
+  font-family: "Inter", system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  margin: 0;
+  padding: 0;
+}
+
+/* Old top header is replaced by the sidebar */
+body.has-sidebar > header { display: none; }
+
+/* Sidebar */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 62px;
+  background: var(--sidebar);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding-top: 18px;
+  z-index: 50;
+}
+.sidebar-logo {
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  background: #fff;
+  color: var(--sidebar);
+  font: 700 12px/34px "Playfair Display", serif;
+  text-align: center;
+  margin-bottom: 14px;
+}
+.sidebar-link {
+  position: relative;
+  width: 42px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  color: #a9a59d;
+  text-decoration: none;
+}
+.sidebar-link:hover { color: #fff; background: #2a2a2a; }
+.sidebar-link.active { color: #fff; background: #333; }
+.sidebar-link::after {
+  content: attr(data-label);
+  position: absolute;
+  left: 52px;
+  white-space: nowrap;
+  background: #000;
+  color: #fff;
+  font-size: 12px;
+  padding: 5px 9px;
+  border-radius: 6px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.12s;
+}
+.sidebar-link:hover::after,
+.sidebar-link:focus-visible::after { opacity: 1; }
+
+/* Page layout */
+.main-container {
+  margin-left: 62px;
+  padding: 32px 36px 48px;
+  align-items: flex-start;
+  text-align: left;
+}
+h2 {
+  font-family: "Playfair Display", serif;
+  font-weight: 700;
+  font-size: 2rem;
+  margin: 0 0 20px;
+}
+
+/* Forms as cards */
+form {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 22px 24px;
+  max-width: 560px;
+  width: 100%;
+  box-sizing: border-box;
+  align-items: stretch;
+}
+label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--muted);
+  margin: 12px 0 4px;
+}
+input, textarea {
+  font: inherit;
+  color: var(--text);
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin: 4px 0 0;
+  width: 100%;
+  box-sizing: border-box;
+}
+input:focus, textarea:focus {
+  outline: 2px solid rgba(27, 34, 54, 0.25);
+  border-color: var(--primary);
+}
+textarea { margin: 0 0 4px; }
+
+/* Buttons: secondary by default, navy for the main action */
+button {
+  font: 500 13px "Inter", sans-serif;
+  background: #fff;
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 9px 14px;
+  margin: 6px 6px 6px 0;
+}
+button:hover { background: #f1ede6; }
+button[type="submit"], button.primary {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #fff;
+}
+button[type="submit"]:hover, button.primary:hover { background: #2a3350; }
+button:disabled { opacity: 0.55; cursor: progress; }
+.buttons-container, .butons-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  gap: 4px;
+  margin-top: 12px;
+}
+
+/* Tables */
+table {
+  background: var(--surface);
+  border-collapse: collapse;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  margin-top: 20px;
+}
+th, td {
+  border: none;
+  border-bottom: 1px solid var(--border);
+  padding: 12px 16px;
+  text-align: left;
+}
+th {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+tbody tr:nth-child(even) td { background: var(--stripe); }
+tfoot td { font-weight: 600; background: #efebe3; }
+td { font-variant-numeric: tabular-nums; }
+
+/* Cards on the Carton Counter */
+.style-section {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+.tables-container { justify-content: flex-start; }
+#all-styles-container { justify-content: flex-start; margin: 10px 0; }
+.toggle-log-btn { margin-right: 6px; }
+
+@media print {
+  .sidebar { display: none; }
+  body { background: #fff; }
+  .main-container { margin: 0; padding: 0; }
+}

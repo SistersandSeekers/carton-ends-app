@@ -4,6 +4,7 @@
         <meta charset="UTF-8" />
         <title>Packing List</title>
         <link rel="stylesheet" href="assets/css/index.css" />
+    <link rel="stylesheet" href="assets/css/theme.css?v=1" />
     </head>
     <body>
         <header>
@@ -44,7 +45,7 @@
             /></label>
 
             <div>
-                <button onclick="addEntry()">Add</button>
+                <button class="primary" onclick="addEntry()">Add</button>
                 <button onclick="undoLast()">Undo Last</button>
                 <button onclick="resetAll()">Reset</button>
                 <button onclick="exportToExcel()">Export to Excel</button>
@@ -122,5 +123,6 @@
 
         <script src="assets/js/packing-list-pdf.js?v=1"></script>
         <script src="assets/js/carton-counter.js?v=9"></script>
-    </body>
+        <script src="assets/js/layout.js?v=1"></script>
+</body>
 </html>
